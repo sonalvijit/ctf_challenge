@@ -1,0 +1,20 @@
+<sitemapindex>
+<sitemap>
+     <loc>http://192.168.29.108:5000/</loc>
+</sitemap>
+<sitemap>
+     <loc>http://192.168.29.108:5000/2</loc>
+</sitemap>
+<sitemap>
+     <loc>http://192.168.29.108:5000/api</loc>
+</sitemap>
+<sitemap>
+     <loc>http://192.168.29.108:5000/api/1</loc>
+</sitemap>
+<sitemap>
+     <loc>http://192.168.29.108:5000/api/2</loc>
+</sitemap>
+<sitemap>
+     <loc>http://192.168.29.108:5000/api/flag</loc>
+</sitemap>
+</sitemapindex>

@@ -1,0 +1,6 @@
+User-agent: *
+     
+Disallow: /private/
+
+
+CTF{wstqfPD3DG7TYwcj7a6DY9EVu}
