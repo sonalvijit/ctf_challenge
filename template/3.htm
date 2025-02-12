@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My HTML5 PageCapture The Flag:2</title>
+    <style>
+     *{
+          font-family: Poppins;
+     }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1,h2{
+          font-family:Creolia;
+        }
+        header {
+            text-align: center;
+            padding: 20px;
+        }
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        section {
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        form label {
+            font-weight: bold;
+            display: block;
+            margin: 10px 0 5px;
+        }
+        form input{
+          outline: none;
+          transition: box-shadow 0.3s ease-in-out;
+        }
+        form input, form textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: box-shadow 0.3s ease-in-out;
+            box-sizing: border-box;
+        }
+        form input:hover{
+          box-shadow: 0 0 10px #007cf8;
+          border-color: #0073e6;
+        }
+        form input:active, form textarea:active {
+            box-shadow: 0 0 10px #0073e6;
+            border-color: #0073e6;
+        }
+        form button {
+            background: #0073e6;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background 0.3s ease-in-out;
+        }
+        form button:hover {
+            background: #007cf8;
+        }
+        input[type="text"]{
+          font-family: JetBrains Mono;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+        }
+
+
+
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 17px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Show Toast */
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        /* Fade-in and Fade-out Animations */
+        @keyframes fadein {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeout {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        .pagination {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            padding: 10px 20px;
+            background: #0073e6;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        .pagination a:hover {
+            background: #005bb5;
+            transform: scale(1.1);
+        }
+        
+        cus{
+          font-family: Courier;
+        }
+        i{
+            font-family: Console;
+        }
+        code{
+            font-family: Source Code Pro;
+            color:#000000;
+            background: #c4c4c4;
+            border-radius: 5px;
+            padding:2px 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Capture The Flag</h1>
+        <h2>Playground</h2>
+    </header>
+    <main>
+        <section>
+            <pre>Submit Flags According to the Question</pre>
+            <pre>Flag Format: <cus><b>CTF{}</b></cus></pre>
+            <form id="question3">
+               <h1>Question 5:</h1> <p>Where is <code>Cookie</code> Located?</p>
+                <input type="text" id="input5" name="question3" required>
+                <button type="submit">Submit</button>
+            </form>
+            <form id="question4">
+               <h1>Question 6:</h1><p>Can you find <code>sitemap</code>?</p>
+                <input type="text" id="input6" name="question2" required>
+                <button type="submit">Submit</button>
+            </form>
+    <div id="toast">Correct Answer! ✅</div>
+    <div class="pagination" id="pagination">
+        <a href="/3">Next Challenge</a>
+    </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 _sonalvijit_. All rights reserved.</p>
+    </footer>
+    <script>
+        let correctAnswers = 0;
+          function checkAnswer(event, inputId, questionNum) {
+            event.preventDefault();
+            const inputValue = document.getElementById(inputId).value;
+            const url = `http://192.168.29.108:5000/api/check_answer/${questionNum}`;
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: inputValue })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.value === "correct") {
+                    correctAnswers++;
+                    showToast("Correct Answer! ✅", "#4CAF50");
+                    checkPagination();
+                } else {
+                    showToast("Incorrect Answer! ❌", "#f44336");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast("Something went wrong! ❌", "#f44336");
+            });
+        }
+        function checkPagination() {
+            if (correctAnswers === 2) {
+                document.getElementById("pagination").style.display = "block";
+            }
+        }
+        document.getElementById('question5').addEventListener('submit', event => checkAnswer(event, 'input5', 3));
+        document.getElementById('question6').addEventListener('submit', event => checkAnswer(event, 'input6', 4));
+        function showToast(message, bgColor) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.style.backgroundColor = bgColor;
+            toast.className = "show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+     //    window.onload = function() {
+     //        fetch('http://192.168.29.108:5000/api/set-cookie')
+     //            .then(response => response.text())
+     //            .then(data => {
+     //                console.log(data);  // Log the response from the server
+     //                alert(data);        // Optionally, display a message to the user
+     //            })
+     //            .catch(error => console.error('Error:', error));
+     //    };
+    </script>
+</body>
+
+
+

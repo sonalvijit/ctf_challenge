@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture The Flag:1</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+    </style>
+    <style>
+     *{
+          font-family: Poppins;
+     }
+        body {
+            font-family: "Poppins", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1,h2{
+          font-family:Creolia;
+        }
+        header {
+            text-align: center;
+            padding: 20px;
+        }
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        section {
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        form label {
+            font-weight: bold;
+            margin: 10px 0 5px;
+        }
+        form input, form textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: box-shadow 0.3s ease-in-out;
+            box-sizing: border-box;
+        }
+        form input:focus, form textarea:focus {
+            box-shadow: 0 0 10px #0073e6;
+            border-color: #0073e6;
+            outline: none;
+        }
+        form button {
+            background: #0073e6;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s ease-in-out;
+        }
+        form button:hover {
+            background: #007cf8;
+        }
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            padding: 16px;
+            position: fixed;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 17px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+        }
+        input[type="text"]{
+            font-family: JetBrains Mono;
+        }
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeout { from { opacity: 1; } to { opacity: 0; } }
+        .pagination {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            padding: 10px 20px;
+            background: #0073e6;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        .pagination a:hover {
+            background: #005bb5;
+            transform: scale(1.1);
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        i{
+            font-family: Console;
+        }
+        code{
+            font-family: Source Code Pro;
+            color:#000000;
+            background: #c4c4c4;
+            border-radius: 5px;
+            padding:2px 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Capture The Flag</h1>
+    </header>
+    <main>
+        <section>
+            <p>Submit Flags According to the Question</p>
+            <p>Flag Format: <b>CTF{}</b></p>
+            <form id="question1">
+               <h2>Question 1:</h2>
+               <p>Find <code>/robots.txt</code></p>
+               <input type="text" id="input1" name="question1" required>
+               <button type="submit">Submit</button>
+            </form>
+            <form id="question2">
+               <h2>Question 2:</h2>
+               <p>Where is the <code>view-source:</code> Page?</p>
+               <input type="text" id="input2" name="question2" required>
+               <button type="submit">Submit</button>
+            </form>
+            <div id="toast"></div>
+            <div class="pagination" id="pagination">
+                <a href="/2">Next Challenge</a>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p><i>CTF by @sonalvijit</i><br>&copy; 2025  All rights reserved.</p>
+    </footer>
+    <script>
+        let correctAnswers = 0;
+        function checkAnswer(event, inputId, questionNum) {
+            event.preventDefault();
+            const inputValue = document.getElementById(inputId).value;
+            const url = `http://192.168.29.108:5000/api/check_answer/${questionNum}`;
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: inputValue })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.value === "correct") {
+                    correctAnswers++;
+                    showToast("Correct Answer! ✅", "#4CAF50");
+                    checkPagination();
+                } else {
+                    showToast("Incorrect Answer! ❌", "#f44336");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast("Something went wrong! ❌", "#f44336");
+            });
+        }
+        function checkPagination() {
+            if (correctAnswers === 2) {
+                document.getElementById("pagination").style.display = "block";
+            }
+        }
+        document.getElementById('question1').addEventListener('submit', event => checkAnswer(event, 'input1', 1));
+        document.getElementById('question2').addEventListener('submit', event => checkAnswer(event, 'input2', 2));
+        function showToast(message, bgColor) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.style.backgroundColor = bgColor;
+            toast.className = "show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+<!--   CTF{glQgH4GIM1Pz3ha2LzLcBFWHJ}   -->
